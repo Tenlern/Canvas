@@ -14,4 +14,10 @@ class LuckyController
             '<html><body>Lucky number: '.$number.'</body></html>'
         );
     }
+    public function test()
+    {
+        return new Response(
+            "<html><body>Вот как-то так :-)</body></html>"
+        );
+    }
 }

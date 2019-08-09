@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "cytoscape": "^3.8.2",
+    "cytoscape-cxtmenu": "^3.1.0",
+    "jquery": "^3.4.1"
+  }
+}
