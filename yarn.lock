@@ -7,6 +7,14 @@ cytoscape-cxtmenu@^3.1.0:
   resolved "https://registry.yarnpkg.com/cytoscape-cxtmenu/-/cytoscape-cxtmenu-3.1.0.tgz#a9e8657e3a2683c25b0644d1812e978a7cf0512e"
   integrity sha512-OFsWZlhwpvltB6Vm0D9+OEnfyQxAROxrF68fvkCRNuCChTAE6eOeBPFuSBnSUVMyj3C1v3t3Iy++Is1yatokmw==
 
+cytoscape-edgehandles@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/cytoscape-edgehandles/-/cytoscape-edgehandles-3.6.0.tgz#daba87b424c6d17ceada1a4be82ec6b094410bfd"
+  integrity sha512-XUzz+zmK42cN6l8uV7b66uUIZruAGgtgrfj/iuUOoCDWHMExARCS23bUju3Pqxywafe75Te3prXH0jrnZ+fYxw==
+  dependencies:
+    lodash.memoize "^4.1.2"
+    lodash.throttle "^4.1.1"
+
 cytoscape@^3.8.2:
   version "3.8.2"
   resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.8.2.tgz#d78f9872c89ebb313451543312929d1036a69f30"
@@ -29,3 +37,13 @@ lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
   integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
+
+lodash.memoize@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
+  integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
+
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
+  integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=

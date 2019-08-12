@@ -2,7 +2,9 @@
 <html lang="ru" dir="ltr">
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="style/master.css">
+        {% block stylesheet %}
+            <link rel="stylesheet" href="{{ asset("master.css") }}">
+        {% endblock %}
         <style media="screen">
         #cy {
         width: 800px;
@@ -13,12 +15,12 @@
         z-index: 999;*/
     }
         </style>
-        <script type="text/javascript" src="../../node_modules/cytoscape/dist/cytoscape.umd.js"></script>
-        <script type="text/javascript" src="../../node_modules/cytoscape-cxtmenu/cytoscape-cxtmenu.js"></script>
-        <script type="text/javascript" src=../../node_modules/jquery/dist/jquery.min.js>
-
-        </script>
-        <script type="text/javascript" src="script/graph.js"></script>
+        {% block javasctripts %}
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.9.0/cytoscape.min.js"></script>
+            <script type="text/javascript" src="{{ asset("cytoscape-cxtmenu.js") }}"></script>
+            <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+            <script type="text/javascript" src="{{ asset("graph.js") }}"></script>
+        {% endblock %}
         <title>Редактор путей</title>
     </head>
     <body>
