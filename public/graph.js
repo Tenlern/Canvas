@@ -1,28 +1,45 @@
-let autoIncrement = 0;
 let pos;
 
-function init(){
+function init(graph){
+    $.ajax({
+        url: "editor/init",
+        success: function(response){
+            $("#log").html("Добро пожаловать");
+            result = result = $.parseJSON(response);
+            result.forEach(function(entry){
+                console.log(entry);
+                graph.add({
+                    group: 'nodes',
+                    data: { id: entry.id, name: entry.name},
+                    position: { x: entry.x , y: entry.y }
+                });
+            });
+        },
+        error: function(response){
+            $("#log").html("Ошибка");
+        }
+    })
 
 }
 
 //Добавление вершины на граф и запись в бд
 function createNode(graph, pos){
-    let node = graph.add({
-        group: 'nodes',
-        data: { id: autoIncrement, name: "Node"+autoIncrement},
-        renderedPosition: pos
-    });
     $.ajax({
-        url: "http://127.0.0.1:8000/editor/create/node",
+        url: "editor/create/node",
         method: "GET",
         data: {
-            name: node.data("name"),
-            x: node.position().x,
-            y: node.position().y
+            x: pos.x,
+            y: pos.y
         },
         success: function(response){
             $("#log").html("Добавлено");
-            console.log(response);
+            result = $.parseJSON(response);
+            console.log(result);
+            graph.add({
+                group: 'nodes',
+                data: { id: result.id, name: result.name},
+                position: { x: result.x , y: result.y }
+            });
         },
         error: function(response) {
             $("#log").html("Ошибка связи");
@@ -33,8 +50,8 @@ function createNode(graph, pos){
 //Обновление координаты вершины в бд
 function updateNode(node){
     $.ajax({
-        url: "/editor/create/node",
-        method: "Post",
+        url: "/editor/update/node",
+        method: "GET",
         data: {
             id: node.id(),
             x: node.position().x,
@@ -52,13 +69,13 @@ function updateNode(node){
 
 //Удаление вершины по ключу
 function deleteNode(graph, ele){
-    graph.remove(ele);
     $.ajax({
-        url: "/editor/create/node",
-        method: "Post",
-        data: { id: node.id() },
+        url: "editor/delete/node",
+        method: "GET",
+        data: { id: ele.id() },
         success: function(response){
             $("#log").html("Вершина удалена");
+            graph.remove(ele);
         },
         error: function(response) {
             $("#log").html("Ошибка связи");
@@ -93,7 +110,7 @@ window.onload = function() {
 						}
 					],
 
-            layout: {name: 'grid',rows: 2},
+            layout: {},
             zoom: 1,
             pan: {x:1, y:1},
             minZoom: 1e-1,
@@ -124,12 +141,12 @@ window.onload = function() {
 
     //Позиция будующей вершины
     cy.on("cxttapstart", function(event){
-        pos = event.renderedPosition;
+        pos = event.position;
     });
 
     //Сохранение координаты в конце перемещения
     cy.on("dragfree", "node", function(event){
-        updateNode(target);
+        updateNode(event.target);
         console.log(event.target.position());
     });
 
@@ -159,11 +176,17 @@ window.onload = function() {
             {
                 content: "Add",
                 select: function(ele){
-                    autoIncrement++;
                     createNode(cy, pos);
                 }
             },
         ],
         separatorWidth: 0
+    });
+
+    init(cy);
+    $("#remove").click(function(){
+        if (confirm("Удаление необратимо. Вы уверены, что хотите удалить все объекты на схеме?")){
+            cy.remove("node");
+        }
     });
 };
