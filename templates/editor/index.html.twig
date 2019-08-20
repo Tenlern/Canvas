@@ -16,10 +16,7 @@
     }
         </style>
         {% block javasctripts %}
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.9.0/cytoscape.min.js"></script>
-            <script type="text/javascript" src="{{ asset("cytoscape-cxtmenu.js") }}"></script>
-            <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-            <script type="text/javascript" src="{{ asset("graph.js") }}"></script>
+            {{ encore_entry_script_tags('app') }}
         {% endblock %}
         <title>Редактор путей</title>
     </head>
@@ -28,7 +25,8 @@
             <div id="log"></div>
             <nav>
                 <ul class='nav_menu'>
-                    <a href="#">Добавить вершину</a>
+                    <a href="#">&#9776;</a>
+                    <button id='add'>Добавить</button>
                     <button id='remove'>Очистить</button>
                 </ul>
             </nav>

@@ -1,24 +1,7 @@
 let pos;
+//let result;
 
-function init(graph){
-    $.ajax({
-        url: "editor/init",
-        success: function(response){
-            $("#log").html("Добро пожаловать");
-            result = result = $.parseJSON(response);
-            result.forEach(function(entry){
-                console.log(entry);
-                graph.add({
-                    group: 'nodes',
-                    data: { id: entry.id, name: entry.name},
-                    position: { x: entry.x , y: entry.y }
-                });
-            });
-        },
-        error: function(response){
-            $("#log").html("Ошибка");
-        }
-    })
+function init(cy){
 
 }
 
@@ -88,33 +71,27 @@ window.onload = function() {
     let cy_container = document.getElementById("cy");
     let cy = cytoscape({
         container: cy_container,
-        elements: {
-            nodes: [],
-            edges: []},
-            style: [
-						{
-							selector: 'node',
-							css: {
-								'content': 'data(name)',
-                                'width': '50px',
-                                'height': '50px'
-							}
-						},
-
-						{
-							selector: 'edge',
-							css: {
-								'curve-style': 'bezier',
-								'target-arrow-shape': 'triangle'
-							}
+        style: [
+					{
+						selector: 'node',
+						css: {
+							'content': 'data(name)',
+                            'width': '50px',
+                            'height': '50px'
 						}
-					],
-
-            layout: {},
-            zoom: 1,
-            pan: {x:1, y:1},
-            minZoom: 1e-1,
-            maxZoom: 1,
+					},
+					{
+						selector: 'edge',
+						css: {
+							'curve-style': 'bezier',
+							'target-arrow-shape': 'triangle'							}
+					}
+				],
+        layout: {},
+        zoom: 1,
+        pan: {x:1, y:1},
+        minZoom: 1e-1,
+        maxZoom: 1,
             zoomingEnabled: true,
             userZoomingEnabled: true,
             panningEnabled: true,
@@ -127,7 +104,6 @@ window.onload = function() {
             autoungrabify: false,
             autounselectify: false,
 
-            // rendering options:
             headless: false,
             styleEnabled: true,
             hideEdgesOnViewport: false,
@@ -137,6 +113,19 @@ window.onload = function() {
             motionBlurOpacity: 0.2,
             //wheelSensitivity: 1,
             pixelRatio: 'auto'
+    });
+    cy.one("render", function(event){
+        $.ajax({
+            url: "editor/init",
+            dataType: "text",
+            success: function(response){
+                result = $.parseJSON(response);
+                cy.json({elements: result});
+            },
+            error: function(response){
+                $("#log").html("Ошибка");
+            }
+        });
     });
 
     //Позиция будующей вершины
@@ -183,7 +172,7 @@ window.onload = function() {
         separatorWidth: 0
     });
 
-    init(cy);
+    //init(cy);
     $("#remove").click(function(){
         if (confirm("Удаление необратимо. Вы уверены, что хотите удалить все объекты на схеме?")){
             cy.remove("node");
