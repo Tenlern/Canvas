@@ -1,6 +1,7 @@
 // assets/js/app.js
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-require('../css/app.css');
+import 'bootstrap';
 import $ from "jquery";
 import cytoscape from 'cytoscape';
 import cxtmenu from 'cytoscape-cxtmenu';
@@ -9,12 +10,13 @@ import edgehandles from 'cytoscape-edgehandles';
 cytoscape.use( cxtmenu );
 cytoscape.use( edgehandles );
 
-let pos;
+//Позиция создания вершины через контекстное меню
+let pos = {x: 0, y: 0};
 //Настройки отображения элементов редактора
 let style = [
     {
         //Настройки отображения вершин
-        selector: 'node',
+        selector: 'node[name]',
         css: {
             'content': 'data(name)',
             'width': '50px',
@@ -25,20 +27,41 @@ let style = [
         //Настройки отображения локаций
         selector: 'edge',
         css: {
-            'curve-style': 'bezier',
+            'curve-style': 'straight',
             'target-arrow-shape': 'triangle'
+        }
+    },
+    {
+        //Настройки отображения
+        selector: '.eh-handle',
+        style: {
+            'background-color': '#1477EC',
+            'width': 12,
+            'height': 12,
+            'shape': 'ellipse',
+            'overlay-opacity': 0,
+            'border-width': 12,
+            'border-opacity': 0
+        }
+    },
+    {
+        selector: '.eh-preview, .eh-ghost-edge',
+        style: {
+            'opacity': 0.8,
+            'line-color': '#1477EC',
+            'target-arrow-color': '#1477EC',
+            'source-arrow-color': '#1477EC'
         }
     }
 ];
 
 //Функция, возвращающая блок alert Bootstrap4
 function printMessage(message) {
-    return '<div class="alert alert-warning alert-dismissible fade show fixed-bottom mb-0" role="alert">'+message+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+    $("footer").append('<div class="alert alert-info alert-dismissible fade show" role="alert">'+message+'</div>');
+    $(".alert").append('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>');
 }
 
-
 window.onload = function() {
-    console.log('Init cytoscape');
     let cy = cytoscape({
         container: $("#cy"),
         style: style,
@@ -68,6 +91,11 @@ window.onload = function() {
         pixelRatio: 'auto'
     });
 
+    //Вспомогательное событие, отслеживающие позицию правого клика
+    cy.on("cxttapstart", function(event){
+        pos = event.position;
+    });
+
     //Загрузка сохраненных вершин и локаций из бд на момент прорисовки поля
     cy.one("render", function(event){
         $.ajax({
@@ -77,7 +105,7 @@ window.onload = function() {
                 cy.json({elements: response});
             },
             error: function(response){
-                $("footer").append(printMessage("Нет подключения к базе данных"));
+                printMessage("Нет подключения к базе данных");
             }
         });
     });
@@ -94,20 +122,17 @@ window.onload = function() {
             },
             dataType: "json",
             success: function(response){
-                $("#log").html("Координаты обновлены");
             },
             error: function(response) {
                 //Возвращенение элемента к исходной позиции
                 event.target.position(event.position);
                 //Запрет на перемещение элементов
                 cy.nodes().ungrabify();
-                $("footer").append(printMessage("Нет подключения к базе данных"));
+                printMessage("Нет подключения к базе данных");
             }
 
         });
-        console.log(event.target.position());
     });
-
 
     //Контекстное меню вершины
     cy.cxtmenu({
@@ -118,11 +143,42 @@ window.onload = function() {
                 content: "Удалить",
                 select: function(ele) {
                     $.ajax({
-                        url: "editor/delete/node",
+                        url: "editor/delete",
                         method: "GET",
-                        data: { id: ele.id() },
+                        data: { id: ele.id(), group: "nodes" },
                         success: function(response) {
-                            $("footer").append(printMessage("Вершина успешно удалена"));
+                            printMessage("Вершина успешно удалена");
+                            cy.remove(ele);
+                        },
+                        error: function(response) {
+                            cy.nodes().ungrabify();
+                            printMessage("Нет подключения к базе данных");
+                        }
+                    });
+                }
+            }
+        ],
+        activePadding: 10,
+        indicatorSize: 12,
+        separatorWidth: 0,
+        openMenuEvents: 'cxttapstart',
+    });
+
+    //Контекстное меню локации
+    cy.cxtmenu({
+        menuRadius: 85,
+        selector: "edge",
+        commands: [
+            {
+                content: "Удалить",
+                select: function(ele) {
+                    $.ajax({
+                        url: "editor/delete",
+                        method: "GET",
+                        data: { id: ele.id().substr(1), group: "edges" },
+                        dataType: "json",
+                        success: function(response) {
+                            printMessage("Путь успешно удален");
                             cy.remove(ele);
                         },
                         error: function(response) {
@@ -132,7 +188,11 @@ window.onload = function() {
                     });
                 }
             }
-        ]
+        ],
+        activePadding: 10,
+        indicatorSize: 12,
+        separatorWidth: 0,
+        openMenuEvents: 'cxttapstart',
     });
 
     //Контекстное меню канваса
@@ -151,15 +211,16 @@ window.onload = function() {
                     $.ajax({
                         url: "editor/create/node",
                         method: "GET",
+                        dataType: "json",
                         data: {
                             x: pos.x,
                             y: pos.y
                         },
                         success: function(response){
-                            graph.add(response);
+                            cy.add(response);
                         },
                         error: function(response) {
-                            $("footer").append(printMessage("Нет подключения к базе данных"));
+                            printMessage("Нет подключения к базе данных");
                         }
                     });
                     //createNode(cy, pos);
@@ -168,8 +229,66 @@ window.onload = function() {
         ],
         activePadding: 10,
         indicatorSize: 12,
-        separatorWidth: 0
+        separatorWidth: 0,
+        openMenuEvents: 'cxttapstart',
     });
-    cy.edgehandles({});
-    console.log(cy.json());
+
+    //Настройки модуля отрисовки локаций
+    cy.edgehandles({
+        preview: true,
+        handleNodes: 'node',
+        noEdgeEventsInDraw: false,
+        //Обработчик события добавления новой локации
+        complete: function( sourceNode, targetNode, addedEles ) {
+            $.ajax({
+                url: "editor/create/location",
+                method: "GET",
+                dataType: "json",
+                data: {
+                    source: sourceNode.id(),
+                    target: targetNode.id(),
+                },
+                success: function(response){
+                    //Созданный макет уничтожается
+                    addedEles.remove();
+                    //Создается новая локация на основе данных ответа
+                    cy.add(response);
+                    printMessage("Создан новый путь из " + sourceNode.data("name") + " в " + targetNode.data("name"));
+                },
+                error: function(response) {
+                    cy.remove(addedEles)
+                    printMessage("Нет подключения к базе данных");
+                }
+            });
+        },
+    });
+
+    //Обработчик клика на кнопку "Добавить"
+    $('#add').click(function(){
+        //Создается якроь, чтобы вычислить position центра
+        let anchor = cy.add({
+            group: "nodes",
+            renderedPosition: {x: cy.width()/2, y: cy.height()/2}
+        });
+        $.ajax({
+            url: "editor/create/node",
+            method: "GET",
+            dataType: "json",
+            data: {
+                x: anchor.position().x,
+                y: anchor.position().y
+            },
+            success: function(response){
+                //Создается новая веришна из ответа сервера
+                cy.add(response);
+                //Якорь удаляется
+                cy.remove(anchor);
+            },
+            error: function(response) {
+                //Отмена операции
+                cy.remove(anchor);
+                $("footer").append(printMessage("Нет подключения к базе данных"));
+            },
+        });
+    });
 }

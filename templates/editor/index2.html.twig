@@ -3,33 +3,33 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
-        {% block javasctripts %}
-            {{ encore_entry_script_tags('app') }}
+        {%block stylesheets%}
+            <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon/favicon.ico') }}" />
+            <link rel="stylesheet" href="{{ asset('build/vendors~app.css') }}">
         {% endblock %}
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-        <title>Document</title>
+        {% block javasctripts %}
+            <script src="{{ asset('build/app.js') }}" charset="utf-8"></script>
+            <script src="{{ asset('build/runtime.js') }}" charset="utf-8"></script>
+            <script src="{{ asset('build/vendors~app.js') }}" charset="utf-8"></script>
+        {% endblock %}
+        <title>Cytoscape editor</title>
     </head>
     <body class="container-fluid h-100 mh-100 p-0 pt-3 m-0 mt-5 border">
         <header class="container-fluid">
             <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
                 <a href="#" class="navbar-brand">Test</a>
-                <span class="navbar-text">My first Bootstrap4 page</span>
+                <span class="navbar-text">Simple graph editor</span>
                 <ul class="navbar-nav nav-tabs ml-auto">
                     <li class="nav-item">
+                        <!-- Выпадающее меню -->
                         <div class="dropdown">
                             <button class="nav-link btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Дополнительные функции
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                <button class="dropdown-item" type="button">Добавить</button>
+                                <button class="dropdown-item" type="button" id='add'>Добавить</button>
                                 <div class="dropdown-divider"></div>
-                                <button class="dropdown-item" type="button">Очистить поле</button>
+                                <button class="dropdown-item" type="button" id='clean'>Очистить поле</button>
                             </div>
                         </div>
                     </li>
@@ -44,16 +44,11 @@
         </header>
         <main class="row h-100">
             <section class="container-fluid border">
-                <div class="jumbotron jumbotron-fluid h-100 m-0" id="cy"></div>
+                <!-- Контейнер графа модуля cytoscape -->
+                <div class="jumbotron jumbotron-fluid h-100 m-0 p-1" id="cy"></div>
             </section>
         </main>
-        <footer class="">
-            <div class="alert alert-warning alert-dismissible fade show fixed-bottom mb-0" role="alert">
-                <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+        <footer class="fixed-bottom">
         </footer>
     </body>
 </html>
