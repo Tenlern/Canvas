@@ -119,7 +119,7 @@ class Node
      */
     public function generateName(): self
     {
-        $this->name = "Node".$this->id;
+        $this->name = "Узел".$this->id;
         return $this;
     }
 }

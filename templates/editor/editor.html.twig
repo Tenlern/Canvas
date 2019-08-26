@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editor{% endblock %}
+
+{% block navbar %}
+<li class="nav-item mr-3">
+    <!-- Выпадающее меню -->
+    <button class="nav-link btn-outline-success" id='add' type='button'>Добавить</button>
+</li>
+<li class="nav-item">
+    <a href="#" class="nav-link  active">Link 1</a>
+</li>
+<li class="nav-item">
+    <a href="#" class="nav-link">Link 2</a>
+</li>
+{% endblock %}
+
+{% block mainRow %}
+<section class="container-fluid border">
+    <!-- Контейнер графа модуля cytoscape -->
+    <div class="jumbotron jumbotron-fluid h-100 m-0 p-1" id="cy"></div>
+</section>
+{% endblock %}

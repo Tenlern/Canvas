@@ -29,7 +29,7 @@ class EditorController extends AbstractController
      * @Route("/editor", name="editor")
     */
     public function index() {
-        return $this->render('editor/index2.html.twig');
+        return $this->render('editor/editor.html.twig');
     }
 
     /**

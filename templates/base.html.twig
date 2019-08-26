@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html class="vh-100" lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {%block stylesheets%}
+            <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon/favicon.ico') }}" />
+            <link rel="stylesheet" href="{{ asset('build/vendors~app.css') }}">
+        {% endblock %}
+        {% block javasctripts %}
+            <script src="{{ asset('build/app.js') }}" charset="utf-8"></script>
+            <script src="{{ asset('build/runtime.js') }}" charset="utf-8"></script>
+            <script src="{{ asset('build/vendors~app.js') }}" charset="utf-8"></script>
+        {% endblock %}
+        <title>
+            {{ block('title') }}
+        </title>
+    </head>
+    <body class="container-fluid h-100 mh-100 p-0 pt-3 m-0 mt-5 border">
+        <header class="container-fluid">
+            <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+                <a href="#" class="navbar-brand">Test</a>
+                <span class="navbar-text">
+                    {% block title %}{% endblock %}
+                </span>
+                <ul class="navbar-nav ml-auto">
+                    {% block navbar %}
+                    {% endblock%}
+                </ul>
+            </nav>
+        </header>
+        <main class="row h-100">
+            {% block mainRow %}
+            {% endblock %}
+        </main>
+        <footer class="fixed-bottom">
+            {% block footer %}
+            {% endblock %}
+        </footer>
+    </body>
+</html>
